@@ -17,7 +17,6 @@ object MouseExForm: TMouseExForm
   Font.Style = []
   FormStyle = fsStayOnTop
   KeyPreview = True
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
@@ -85,7 +84,6 @@ object MouseExForm: TMouseExForm
     Constraints.MinHeight = 43
     ParentBackground = False
     TabOrder = 2
-    ExplicitTop = 157
     object LinkGridPanel: TGridPanel
       Left = 0
       Top = 0
@@ -147,7 +145,6 @@ object MouseExForm: TMouseExForm
     Padding.Bottom = 12
     ParentColor = True
     TabOrder = 1
-    ExplicitTop = 48
     object LabelConfig: TLabel
       AlignWithMargins = True
       Left = 16
