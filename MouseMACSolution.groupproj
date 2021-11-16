@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{C6BFAAD7-956C-49B8-ABD8-A6C294376827}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="MouseMAC.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Setup.dproj">
+            <Dependencies>MouseMAC.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="MouseMAC">
+        <MSBuild Projects="MouseMAC.dproj"/>
+    </Target>
+    <Target Name="MouseMAC:Clean">
+        <MSBuild Projects="MouseMAC.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MouseMAC:Make">
+        <MSBuild Projects="MouseMAC.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Setup" DependsOnTargets="MouseMAC">
+        <MSBuild Projects="Setup.dproj"/>
+    </Target>
+    <Target Name="Setup:Clean" DependsOnTargets="MouseMAC:Clean">
+        <MSBuild Projects="Setup.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Setup:Make" DependsOnTargets="MouseMAC:Make">
+        <MSBuild Projects="Setup.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="MouseMAC;Setup"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="MouseMAC:Clean;Setup:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="MouseMAC:Make;Setup:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

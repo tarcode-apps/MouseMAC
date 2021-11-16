@@ -1,0 +1,4 @@
+program Setup;
+
+begin
+end.

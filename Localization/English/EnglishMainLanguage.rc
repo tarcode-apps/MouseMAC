@@ -1,0 +1,21 @@
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+0, "English"
+1, "Mouse MAC"
+2, "Settings:"
+3, "&Enabled"
+4, "Enabled"
+5, "Disabled"
+6, "&Autostart with Windows"
+7, "&Invert scrolling"
+8, "&Mouse settings"
+9, "E&xit"
+10, "Version"
+11, "Mouse MAC &website"
+12, "http://mousemac.tarcode.ru"
+
+22, "Listbox smooth scrolling"
+
+30, "&Horizontal scrolling with the Shift key"
+}
