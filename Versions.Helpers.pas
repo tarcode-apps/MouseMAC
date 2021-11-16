@@ -22,7 +22,13 @@ function IsWindows7SP1OrGreater: Boolean;
 function IsWindows8OrGreater: Boolean;
 function IsWindows8Point1OrGreater: Boolean;
 function IsWindows10OrGreater: Boolean;
+function IsWindows10Update1607OrGreater: Boolean;
 function IsWindows10FallCreatorsOrGreater: Boolean;
+function IsWindows10Update1803OrGreater: Boolean;
+function IsWindows10Update1809OrGreater: Boolean;
+function IsWindows10Update1903OrGreater: Boolean;
+function IsWindows10Update1909OrGreater: Boolean;
+function IsWindows11OrGreater: Boolean;
 function IsWindowsServer: Boolean;
 function IsWindows64Bit: Boolean;
 
@@ -91,7 +97,13 @@ var
   Windows8OrGreater               : TTrilean;
   Windows8Point1OrGreater         : TTrilean;
   Windows10OrGreater              : TTrilean;
+  Windows10Update1607OrGreater    : TTrilean;
   Windows10FallCreatorsOrGreater  : TTrilean;
+  Windows10Update1803OrGreater    : TTrilean;
+  Windows10Update1809OrGreater    : TTrilean;
+  Windows10Update1903OrGreater    : TTrilean;
+  Windows10Update1909OrGreater    : TTrilean;
+  Windows11OrGreater              : TTrilean;
   WindowsServer                   : TTrilean;
   Windows64Bit                    : TTrilean;
 
@@ -267,6 +279,17 @@ begin
   end;
 end;
 
+function IsWindows10Update1607OrGreater: Boolean;
+begin
+  if Windows10Update1803OrGreater.IsKnown then
+    Result := Windows10Update1803OrGreater
+  else
+  begin
+    Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 14393, 0);
+    Windows10Update1803OrGreater := Result;
+  end;
+end;
+
 function IsWindows10FallCreatorsOrGreater: Boolean;
 begin
   if Windows10FallCreatorsOrGreater.IsKnown then
@@ -275,6 +298,61 @@ begin
   begin
     Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 16299, 0);
     Windows10FallCreatorsOrGreater := Result;
+  end;
+end;
+
+function IsWindows10Update1803OrGreater: Boolean;
+begin
+  if Windows10Update1803OrGreater.IsKnown then
+    Result := Windows10Update1803OrGreater
+  else
+  begin
+    Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 17134, 0);
+    Windows10Update1803OrGreater := Result;
+  end;
+end;
+
+function IsWindows10Update1809OrGreater: Boolean;
+begin
+  if Windows10Update1809OrGreater.IsKnown then
+    Result := Windows10Update1809OrGreater
+  else
+  begin
+    Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 17763, 0);
+    Windows10Update1809OrGreater := Result;
+  end;
+end;
+
+function IsWindows10Update1903OrGreater: Boolean;
+begin
+  if Windows10Update1903OrGreater.IsKnown then
+    Result := Windows10Update1903OrGreater
+  else
+  begin
+    Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 18362, 0);
+    Windows10Update1903OrGreater := Result;
+  end;
+end;
+
+function IsWindows10Update1909OrGreater: Boolean;
+begin
+  if Windows10Update1909OrGreater.IsKnown then
+    Result := Windows10Update1909OrGreater
+  else
+  begin
+    Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 18363, 0);
+    Windows10Update1909OrGreater := Result;
+  end;
+end;
+
+function IsWindows11OrGreater: Boolean;
+begin
+  if Windows11OrGreater.IsKnown then
+    Result := Windows11OrGreater
+  else
+  begin
+    Result := IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 22000, 0);
+    Windows11OrGreater := Result;
   end;
 end;
 
@@ -373,8 +451,15 @@ initialization
   Windows8OrGreater               := TTrilean.Empty;
   Windows8Point1OrGreater         := TTrilean.Empty;
   Windows10OrGreater              := TTrilean.Empty;
+  Windows10Update1607OrGreater    := TTrilean.Empty;
   Windows10FallCreatorsOrGreater  := TTrilean.Empty;
+  Windows10Update1803OrGreater    := TTrilean.Empty;
+  Windows10Update1809OrGreater    := TTrilean.Empty;
+  Windows10Update1903OrGreater    := TTrilean.Empty;
+  Windows10Update1909OrGreater    := TTrilean.Empty;
+  Windows11OrGreater              := TTrilean.Empty;
   WindowsServer                   := TTrilean.Empty;
   Windows64Bit                    := TTrilean.Empty;
 
 end.
+

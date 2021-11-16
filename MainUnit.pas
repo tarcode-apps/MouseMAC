@@ -5,24 +5,39 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
   System.SysUtils, System.Variants, System.Classes, System.Win.Registry,
+  System.Generics.Collections, System.Generics.Defaults,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.Buttons,
   Autorun.Manager,
-  Core.Language,
-  Core.UI, Core.UI.Controls,
+  AutoUpdate, AutoUpdate.Scheduler,
+  Core.Startup,
+  Core.Language, Core.Language.Controls,
+  Core.UI, Core.UI.Controls, Core.UI.Notifications,
   Desktop,
   Mouse.Mac,
   Tray.Notify.Window, Tray.Notify.Controls,
-  Versions, Versions.Info, Versions.Helpers;
+  Versions, Versions.Info, Versions.Helpers,
+  Helpers.License;
 
 const
   REG_Key = 'Software\Mouse MAC';
+  REG_ID = 'ID';
+  REG_Version = 'Version';
+  REG_AutoUpdateEnable = 'AutoUpdateEnable';
+  REG_AutoUpdateLastCheck = 'AutoUpdateLastCheck';
+  REG_AutoUpdateSkipVersion = 'AutoUpdateSkipVersion';
+  REG_Language = 'Language';
+  REG_LanguageId = 'LanguageId';
   REG_Enable = 'Enable';
   REG_Invert = 'Invert';
   REG_HorizontalScrollOnShiftDown = 'HorizontalScrollOnShiftDown';
 
 type
   TConfig = record
+    ID: TAppID;
+    AutoUpdateEnable: Boolean;
+    AutoUpdateLastCheck: TDateTime;
+    AutoUpdateSkipVersion: TVersion;
     Enable: Boolean;
     Invert: Boolean;
     HorizontalScrollOnShiftDown: Boolean;
@@ -42,20 +57,27 @@ type
     CheckBoxEnable: TCheckBox;
     CheckBoxInvert: TCheckBox;
     CheckBoxAutorun: TCheckBox;
+    TrayMenuAutoUpdate: TMenuItem;
+    TrayMenuAutoUpdateEnable: TMenuItem;
+    TrayMenuAutoUpdateCheck: TMenuItem;
     PopupMenuTray: TPopupMenu;
     TrayMenuMouse: TMenuItem;
     TrayMenuEnable: TMenuItem;
     TrayMenuAutorun: TMenuItem;
     TrayMenuListboxSmoothScrolling: TMenuItem;
+    TrayMenuHorizontalScrollOnShiftDown: TMenuItem;
     TrayMenuWebsite: TMenuItem;
+    TrayMenuLicense: TMenuItem;
     TrayMenuClose: TMenuItem;
     TrayMenuSeparator1: TMenuItem;
     TrayMenuSeparator2: TMenuItem;
     TrayMenuSeparator3: TMenuItem;
     TrayMenuSeparator4: TMenuItem;
+    TrayMenuLanguage: TMenuItem;
+    TrayMenuLanguageSystem: TMenuItem;
+    TrayMenuSeparator5: TMenuItem;
     LinkGridPanel: TGridPanel;
     Link: TStaticText;
-    TrayMenuHorizontalScrollOnShiftDown: TMenuItem;
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -69,23 +91,34 @@ type
     procedure TrayMenuMouseClick(Sender: TObject);
     procedure TrayMenuEnableClick(Sender: TObject);
     procedure TrayMenuAutorunClick(Sender: TObject);
+    procedure TrayMenuAutoUpdateEnableClick(Sender: TObject);
+    procedure TrayMenuAutoUpdateCheckClick(Sender: TObject);
+    procedure TrayMenuLanguageItemClick(Sender: TObject);
     procedure TrayMenuHorizontalScrollOnShiftDownClick(Sender: TObject);
     procedure TrayMenuListboxSmoothScrollingClick(Sender: TObject);
     procedure TrayMenuWebsiteClick(Sender: TObject);
+    procedure TrayMenuLicenseClick(Sender: TObject);
     procedure TrayMenuCloseClick(Sender: TObject);
 
     procedure CheckBoxEnableClick(Sender: TObject);
     procedure CheckBoxInvertClick(Sender: TObject);
     procedure CheckBoxAutorunClick(Sender: TObject);
+
+    procedure TrayNotifyUpdateAvalible(Sender: TObject; Value: Integer);
+    procedure TrayNotifyUpdateFail(Sender: TObject; Value: Integer);
   protected
     procedure LoadIcon; override;
     procedure Loadlocalization;
+    procedure LoadAvailableLocalizetions;
 
+    function DefaultConfig: TConfig;
     function LoadConfig: TConfig;
     procedure SaveConfig(Conf: TConfig);
     procedure SaveCurrentConfig;
+    procedure DeleteConfig;
   private
     LockerAutorun: ILocker;
+    LockerSaveConfig: ILocker;
     LockerMouseMac: ILocker;
     LockerInvert: ILocker;
     LockerHorizontalScrollOnShiftDown: ILocker;
@@ -93,6 +126,8 @@ type
     LockerListboxSmoothScrolling: ILocker;
 
     FUIInfo: TUIInfo;
+
+    AutoUpdateScheduler: TAutoUpdateScheduler;
 
     procedure SetUIInfo(const Value: TUIInfo);
 
@@ -106,6 +141,13 @@ type
 
     procedure DesktopManagerUIEffects(Sender: TObject; Capable: Boolean; State: Boolean);
     procedure DesktopManagerListboxSmoothScrolling(Sender: TObject; Capable: Boolean; State: Boolean);
+
+    procedure AutoUpdateSchedulerInCheck(Sender: TObject);
+    procedure AutoUpdateSchedulerChecked(Sender: TObject);
+    procedure AutoUpdateSchedulerSaveLastCheck(Sender: TObject; Time: TDateTime);
+    procedure AutoUpdateSchedulerInstalling(Sender: TObject);
+    procedure AutoUpdateSchedulerSkip(Sender: TObject; Version: TVersion);
+    procedure AutoUpdateSchedulerAvalible(Sender: TObject; Version: TVersion);
   public
     property UIInfo: TUIInfo read FUIInfo write SetUIInfo;
   end;
@@ -123,6 +165,7 @@ var
 begin
   // Инициализация флагов обновления данных
   LockerAutorun                     := TLocker.Create;
+  LockerSaveConfig                  := TLocker.Create;
   LockerMouseMac                    := TLocker.Create;
   LockerInvert                      := TLocker.Create;
   LockerHorizontalScrollOnShiftDown := TLocker.Create;
@@ -163,6 +206,9 @@ begin
   TrayIcon.PopupMenu := PopupMenuTray;
   TrayIcon.Icon := Application.Icon.Handle;
 
+  // Инициализация Notification
+  TNotificationService.Notification := TrayNotification;
+
   // Инициализация автозагрузки
   AutorunManager.OnAutorun := AutorunManagerAutorun;
 
@@ -178,19 +224,40 @@ begin
   TDesktopManager.OnUIEffects := DesktopManagerUIEffects;
   TDesktopManager.OnListboxSmoothScrolling := DesktopManagerListboxSmoothScrolling;
 
+  // Инициализация AutoUpdateScheduler
+  AutoUpdateScheduler := TAutoUpdateScheduler.Create(TLang[40],
+    Conf.AutoUpdateLastCheck, Conf.AutoUpdateSkipVersion, Conf.ID);
+  AutoUpdateScheduler.OnInCheck := AutoUpdateSchedulerInCheck;
+  AutoUpdateScheduler.OnChecked := AutoUpdateSchedulerChecked;
+  AutoUpdateScheduler.OnSaveLastCheck := AutoUpdateSchedulerSaveLastCheck;
+  AutoUpdateScheduler.OnInstalling := AutoUpdateSchedulerInstalling;
+  AutoUpdateScheduler.OnSkip := AutoUpdateSchedulerSkip;
+  AutoUpdateScheduler.OnAvalible := AutoUpdateSchedulerAvalible;
+  AutoUpdateScheduler.Enable := Conf.AutoUpdateEnable;
+
+  TrayMenuAutoUpdateEnable.Checked := AutoUpdateScheduler.Enable;
+
   // Загрузка локализации
+  LoadAvailableLocalizetions;
   Loadlocalization;
 
   // Отображение иконки в трее
   TrayIcon.Visible := True;
   // Исправление отсутствующего значка при автозапуске через планировщик задач
   TrayIcon.Update(30000);
+
+  case AutoUpdateScheduler.StartupUpdateStatus of
+    susComplete: TrayNotification.Notify(Format(TLang[45], [TVersionInfo.FileVersion.ToString]));
+    susFail: TrayNotification.Notify(Format(TLang[46], [TVersionInfo.FileVersion.ToString]), [nfError], TrayNotifyUpdateFail);
+  end;
 end;
 
 procedure TMouseExForm.FormDestroy(Sender: TObject);
 begin
-  if WindowCreated then
+  if WindowCreated and not LockerSaveConfig.IsLocked then
     SaveCurrentConfig;
+
+  AutoUpdateScheduler.Free;
 
   TMouseMac.Enable := False;
 end;
@@ -256,6 +323,62 @@ begin
   SetForegroundWindow(TrayIcon.Handle);
 end;
 
+procedure TMouseExForm.TrayMenuAutoUpdateEnableClick(Sender: TObject);
+begin
+  AutoUpdateScheduler.Enable := (Sender as TMenuItem).Checked;
+end;
+
+procedure TMouseExForm.TrayMenuAutoUpdateCheckClick(Sender: TObject);
+begin
+  AutoUpdateScheduler.Check(True);
+end;
+
+procedure TMouseExForm.TrayMenuLanguageItemClick(Sender: TObject);
+var
+  NewLanguageId, LastEffectiveLanguageId: LANGID;
+  StartUpInfo : TStartUpInfo;
+  ProcessInfo : TProcessInformation;
+begin
+  if (Sender is TLanguageMenuItem) then
+    NewLanguageId := (Sender as TLanguageMenuItem).Localization.LanguageId
+  else
+    NewLanguageId := 0;
+
+  if TLang.LanguageId = NewLanguageId then Exit;
+
+  LastEffectiveLanguageId := TLang.EffectiveLanguageId;
+  TLang.LanguageId := NewLanguageId;
+  if LastEffectiveLanguageId = TLang.EffectiveLanguageId then Exit;
+
+  Loadlocalization;
+
+  SaveCurrentConfig;
+
+  TMutexLocker.Unlock;
+  TrayIcon.Visible := False;
+
+  ZeroMemory(@StartUpInfo, SizeOf(StartUpInfo));
+  StartUpInfo.cb := SizeOf(StartUpInfo);
+
+  if not CreateProcess(LPCTSTR(Application.ExeName), nil, nil, nil, True,
+    GetPriorityClass(GetCurrentProcess), nil, nil, StartUpInfo, ProcessInfo) then
+  begin
+    TMutexLocker.Lock;
+    TrayIcon.Visible := True;
+    Exit;
+  end;
+
+  LockerSaveConfig.Lock;
+  try
+    Application.Terminate;
+  finally
+    CloseHandle(ProcessInfo.hProcess);
+    CloseHandle(ProcessInfo.hThread);
+
+    ExitProcess(0);
+  end;
+end;
+
 procedure TMouseExForm.TrayMenuHorizontalScrollOnShiftDownClick(
   Sender: TObject);
 begin
@@ -274,9 +397,26 @@ begin
   ShellExecute(Handle, 'open', LPTSTR(TLang[12]), nil, nil, SW_RESTORE);
 end;
 
+procedure TMouseExForm.TrayMenuLicenseClick(Sender: TObject);
+begin
+  TLicense.Open;
+end;
+
 procedure TMouseExForm.TrayMenuCloseClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TMouseExForm.TrayNotifyUpdateAvalible(Sender: TObject;
+  Value: Integer);
+begin
+  SetForegroundWindow(TrayIcon.Handle);
+  AutoUpdateScheduler.Check(True);
+end;
+
+procedure TMouseExForm.TrayNotifyUpdateFail(Sender: TObject; Value: Integer);
+begin
+  ShellExecute(Handle, 'open', LPTSTR(TLang.GetString(12)), nil, nil, SW_RESTORE);
 end;
 {$ENDREGION}
 
@@ -349,6 +489,44 @@ begin
 end;
 {$ENDREGION}
 
+{$REGION 'AutoUpdateScheduler Event'}
+procedure TMouseExForm.AutoUpdateSchedulerChecked(Sender: TObject);
+begin
+  TrayMenuAutoUpdateCheck.Enabled := True
+end;
+
+procedure TMouseExForm.AutoUpdateSchedulerInCheck(Sender: TObject);
+begin
+  TrayMenuAutoUpdateCheck.Enabled := False;
+end;
+
+procedure TMouseExForm.AutoUpdateSchedulerInstalling(Sender: TObject);
+begin
+  SaveCurrentConfig;
+  TrayIcon.Visible := False;
+  Application.Terminate;
+  ExitProcess(0);
+end;
+
+procedure TMouseExForm.AutoUpdateSchedulerSaveLastCheck(Sender: TObject;
+  Time: TDateTime);
+begin
+  SaveCurrentConfig;
+end;
+
+procedure TMouseExForm.AutoUpdateSchedulerSkip(Sender: TObject;
+  Version: TVersion);
+begin
+  SaveCurrentConfig;
+end;
+
+procedure TMouseExForm.AutoUpdateSchedulerAvalible(Sender: TObject;
+  Version: TVersion);
+begin
+  TrayNotification.Notify(Format(TLang[44], [Version.ToString]), TrayNotifyUpdateAvalible);
+end;
+{$ENDREGION}
+
 procedure TMouseExForm.AutorunManagerAutorun(Sender: TObject; Enable: Boolean);
 begin
   LockerAutorun.Lock;
@@ -377,6 +555,15 @@ begin
 end;
 
 procedure TMouseExForm.Loadlocalization;
+  function GetInternationalization(Index: Integer): string;
+  var
+    NonLocalized: string;
+  begin
+    Result := TLang[Index];
+    NonLocalized := TLang.GetString(Index, TLang.DefaultLang);
+    if Result <> NonLocalized then
+      Result := Result + ' (' + NonLocalized + ')';
+  end;
 begin
   LabelAppName.Caption      := TLang[1];
   LabelConfig.Caption       := TLang[2];
@@ -388,14 +575,58 @@ begin
   TrayMenuEnable.Caption    := TLang[3];
   TrayMenuAutorun.Caption   := TLang[6];
   TrayMenuWebsite.Caption   := TLang[11];
+  TrayMenuLicense.Caption   := TLang[224]; // License
   TrayMenuClose.Caption     := TLang[9];
   TrayMenuListboxSmoothScrolling.Caption      := TLang[22]; // Гладкое прокручивание списков
   TrayMenuHorizontalScrollOnShiftDown.Caption := TLang[30]; // Горизонтальная прокрутка с клавишей Shift
+
+  TrayMenuAutoUpdate.Caption        := TLang[41]; // Automatic updates
+  TrayMenuAutoUpdateEnable.Caption  := TLang[42]; // Turn on automatic updates
+  TrayMenuAutoUpdateCheck.Caption   := TLang[43]; // Check for Updates
+
+  TrayMenuLanguage.Caption            := GetInternationalization(150);
+  TrayMenuLanguageSystem.Caption      := GetInternationalization(151);
 
   if TMouseMac.Enable then
     TrayIcon.Hint := TLang[1] + sLineBreak + TLang[4]
   else
     TrayIcon.Hint := TLang[1] + sLineBreak + TLang[5];
+
+  TrayIcon.BalloonTitle  := TLang[1]; // MouseMAC
+  TrayNotification.Title := TLang[1]; // MouseMAC
+end;
+
+procedure TMouseExForm.LoadAvailableLocalizetions;
+var
+  AvailableLocalizations: TAvailableLocalizations;
+  Localization: TAvailableLocalization;
+  MenuItem: TMenuItem;
+begin
+  AvailableLocalizations := TLang.GetAvailableLocalizations(0);
+  AvailableLocalizations.Sort(TComparer<TAvailableLocalization>.Construct(
+    function(const Left, Right: TAvailableLocalization): Integer
+    begin
+      Result := string.Compare(
+        Left.Value,
+        Right.Value,
+        [coLingIgnoreCase],
+        MAKELCID(TLang.LanguageId, SORT_DEFAULT));
+    end
+  ));
+  try
+    for Localization in AvailableLocalizations do
+    begin
+      MenuItem := TLanguageMenuItem.Create(PopupMenuTray, Localization);
+      MenuItem.OnClick := TrayMenuLanguageItemClick;
+      MenuItem.Checked := Localization.LanguageId = TLang.LanguageId;
+
+      TrayMenuLanguage.Add(MenuItem);
+    end;
+
+    TrayMenuLanguageSystem.Checked := TLang.LanguageId = 0;
+  finally
+    AvailableLocalizations.Free;
+  end;
 end;
 
 procedure TMouseExForm.SetUIInfo(const Value: TUIInfo);
@@ -416,8 +647,20 @@ begin
 end;
 
 {$REGION 'Config'}
+function TMouseExForm.DefaultConfig: TConfig;
+begin
+  Result.ID := TAutoUpdateScheduler.NewID;
+  Result.AutoUpdateEnable := True;
+  Result.AutoUpdateLastCheck := 0;
+  Result.AutoUpdateSkipVersion := TVersion.Empty;
+  Result.Enable:= True;
+  Result.Invert:= False;
+  Result.HorizontalScrollOnShiftDown:= False;
+end;
+
 function TMouseExForm.LoadConfig: TConfig;
 var
+  Default: TConfig;
   Registry: TRegistry;
 
   function ReadBoolDef(const Name: string; const Def: Boolean): Boolean;
@@ -443,28 +686,19 @@ var
     else
       Result := Def;
   end;
-
-  function DefConfig: TConfig;
-  begin
-    Result.Enable:= True;
-    Result.Invert:= False;
-    Result.HorizontalScrollOnShiftDown:= False;
-  end;
 begin
+  Default := DefaultConfig;
   Registry := TRegistry.Create;
   try
     Registry.RootKey := HKEY_CURRENT_USER;
-    if not Registry.KeyExists(REG_Key) then begin
-      Result := DefConfig;
-      Exit;
-    end;
-
-    if not Registry.OpenKeyReadOnly(REG_Key) then begin
-      Result := DefConfig;
-      Exit;
-    end;
+    if not Registry.KeyExists(REG_Key) then Exit(Default);
+    if not Registry.OpenKeyReadOnly(REG_Key) then Exit(Default);
 
     // Read config
+    Result.ID := ReadIntegerDef(REG_ID, Default.ID);
+    Result.AutoUpdateEnable := ReadBoolDef(REG_AutoUpdateEnable, Default.AutoUpdateEnable);
+    Result.AutoUpdateLastCheck := StrToDateTimeDef(ReadStringDef(REG_AutoUpdateLastCheck, ''), Default.AutoUpdateLastCheck);
+    Result.AutoUpdateSkipVersion := ReadStringDef(REG_AutoUpdateSkipVersion, Default.AutoUpdateSkipVersion);
     Result.Enable:= ReadBoolDef(REG_Enable, True);
     Result.Invert:= ReadBoolDef(REG_Invert, False);
     Result.HorizontalScrollOnShiftDown:= ReadBoolDef(REG_HorizontalScrollOnShiftDown, False);
@@ -483,9 +717,15 @@ begin
   Registry := TRegistry.Create;
   try
     Registry.RootKey := HKEY_CURRENT_USER;
-    Registry.DeleteKey(REG_Key);
     if Registry.OpenKey(REG_Key, True) then begin
       // Write config
+      Registry.WriteInteger(REG_ID, Conf.ID);
+      Registry.WriteString(REG_Version, TVersionInfo.FileVersion); // Last version
+      Registry.WriteInteger(REG_LanguageId, TLang.LanguageId);
+
+      Registry.WriteBool(REG_AutoUpdateEnable, Conf.AutoUpdateEnable);
+      Registry.WriteString(REG_AutoUpdateLastCheck, DateTimeToStr(Conf.AutoUpdateLastCheck));
+      Registry.WriteString(REG_AutoUpdateSkipVersion, Conf.AutoUpdateSkipVersion);
       Registry.WriteBool(REG_Enable, Conf.Enable);
       Registry.WriteBool(REG_Invert, Conf.Invert);
       Registry.WriteBool(REG_HorizontalScrollOnShiftDown, Conf.HorizontalScrollOnShiftDown);
@@ -502,11 +742,28 @@ procedure TMouseExForm.SaveCurrentConfig;
 var
   Conf: TConfig;
 begin
+  Conf.ID := AutoUpdateScheduler.ID;
+  Conf.AutoUpdateEnable := AutoUpdateScheduler.Enable;
+  Conf.AutoUpdateLastCheck := AutoUpdateScheduler.LastCheck;
+  Conf.AutoUpdateSkipVersion := AutoUpdateScheduler.SkipVersion;
   Conf.Enable := TMouseMac.Enable;
   Conf.Invert := TMouseMac.Invert;
   Conf.HorizontalScrollOnShiftDown := TMouseMac.HorizontalScrollOnShiftDown;
 
   SaveConfig(Conf);
+end;
+
+procedure TMouseExForm.DeleteConfig;
+var
+  Registry: TRegistry;
+begin
+  Registry := TRegistry.Create;
+  try
+    Registry.RootKey := HKEY_CURRENT_USER;
+    Registry.DeleteKey(REG_Key);
+  finally
+    Registry.Free;
+  end;
 end;
 {$ENDREGION}
 

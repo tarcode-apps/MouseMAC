@@ -6,8 +6,14 @@
         <Projects Include="MouseMAC.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="FilePreparer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Updater.dproj">
+            <Dependencies>MouseMAC.dproj;FilePreparer.dproj</Dependencies>
+        </Projects>
         <Projects Include="Setup.dproj">
-            <Dependencies>MouseMAC.dproj</Dependencies>
+            <Dependencies>Updater.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -26,23 +32,41 @@
     <Target Name="MouseMAC:Make">
         <MSBuild Projects="MouseMAC.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Setup" DependsOnTargets="MouseMAC">
+    <Target Name="FilePreparer">
+        <MSBuild Projects="FilePreparer.dproj"/>
+    </Target>
+    <Target Name="FilePreparer:Clean">
+        <MSBuild Projects="FilePreparer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FilePreparer:Make">
+        <MSBuild Projects="FilePreparer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Updater" DependsOnTargets="MouseMAC;FilePreparer">
+        <MSBuild Projects="Updater.dproj"/>
+    </Target>
+    <Target Name="Updater:Clean" DependsOnTargets="MouseMAC:Clean;FilePreparer:Clean">
+        <MSBuild Projects="Updater.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Updater:Make" DependsOnTargets="MouseMAC:Make;FilePreparer:Make">
+        <MSBuild Projects="Updater.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Setup" DependsOnTargets="Updater">
         <MSBuild Projects="Setup.dproj"/>
     </Target>
-    <Target Name="Setup:Clean" DependsOnTargets="MouseMAC:Clean">
+    <Target Name="Setup:Clean" DependsOnTargets="Updater:Clean">
         <MSBuild Projects="Setup.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Setup:Make" DependsOnTargets="MouseMAC:Make">
+    <Target Name="Setup:Make" DependsOnTargets="Updater:Make">
         <MSBuild Projects="Setup.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="MouseMAC;Setup"/>
+        <CallTarget Targets="MouseMAC;FilePreparer;Updater;Setup"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MouseMAC:Clean;Setup:Clean"/>
+        <CallTarget Targets="MouseMAC:Clean;FilePreparer:Clean;Updater:Clean;Setup:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MouseMAC:Make;Setup:Make"/>
+        <CallTarget Targets="MouseMAC:Make;FilePreparer:Make;Updater:Make;Setup:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -2,7 +2,7 @@ STRINGTABLE
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 {
 0, "English"
-1, "Mouse MAC"
+1, "MouseMAC"
 2, "Settings:"
 3, "&Enabled"
 4, "Enabled"
@@ -18,4 +18,17 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 22, "Listbox smooth scrolling"
 
 30, "&Horizontal scrolling with the Shift key"
+
+40, "https://mousemac.tarcode.ru/update.uurl"
+41, "Automatic &updates"
+42, "Turn &on automatic updates"
+43, "Ch&eck for Updates"
+44, "New version of %0:s is available\nClick here for more details"
+45, "Update successful\nThe new version is %0:s"
+46, "Update failed\nClick here to visit the website"
+
+150, "&Language"
+151, "&Default"
+
+224, "Li&cense"
 }

@@ -43,6 +43,7 @@ type
     FPanelHeader: TPanel;
     FSystemBorder: TSystemBorder;
     FOnSystemBorderChanged: TSystemBorderChangedEvent;
+    FIsLockedOpened: Boolean;
 
     procedure FormReposition(IconRect: TRect; AeroEnabled: Boolean);
     procedure InterfaceBuild;
@@ -74,6 +75,8 @@ type
     destructor Destroy; override;
 
     procedure Reposition;
+    procedure LockOpened;
+    procedure UnlockAndClose;
 
     property TrayIcon: TTrayIcon read FTrayIcon;
     property TrayNotification: INotification read FTrayNotification;
@@ -101,6 +104,7 @@ begin
   FShowFirst := True;
   FShowFix := False;
   FSystemBorder := sbDefault;
+  FIsLockedOpened := False;
 
   FPanelHeader := TPanel.Create(Self);
   with FPanelHeader do
@@ -134,6 +138,7 @@ end;
 
 destructor TTrayNotifyWindow.Destroy;
 begin
+  FIsLockedOpened := False;
   FPanelHeader.Free;
   FTrayIcon.Free;
   inherited;
@@ -327,7 +332,7 @@ end;
 procedure TTrayNotifyWindow.KeyPress(var Key: Char);
 begin
   inherited;
-  if Key = Char(VK_ESCAPE) then ShowWindow(Handle, SW_HIDE);
+  if (Key = Char(VK_ESCAPE)) and not FIsLockedOpened then ShowWindow(Handle, SW_HIDE);
 end;
 
 procedure TTrayNotifyWindow.Reposition;
@@ -344,9 +349,23 @@ begin
   end;
 end;
 
+procedure TTrayNotifyWindow.LockOpened;
+begin
+  ShowWindow(Handle, SW_RESTORE);
+  FIsLockedOpened := True;
+end;
+
+procedure TTrayNotifyWindow.UnlockAndClose;
+begin
+  FIsLockedOpened := False;
+  ShowWindow(Handle, SW_HIDE);
+end;
+
 procedure TTrayNotifyWindow.WMActivate(var Msg: TMessage);
 begin
   inherited;
+  
+  if FIsLockedOpened then Exit;
 
   if Msg.wParam = WA_INACTIVE then begin
     TickCountDeactivate := GetTickCount;
@@ -399,7 +418,11 @@ begin
     inherited;
 
     SetActiveWindow(Handle);
-    SetForegroundWindow(Handle);
+    if not SetForegroundWindow(Handle) then
+    begin
+      // Workaround for Windows 10 Start and Notification Center
+      AttachThreadInput(GetWindowThreadProcessId(GetForegroundWindow), GetCurrentThreadId, True);
+    end;
 
     NotifyWinEvent(EVENT_SYSTEM_MENUPOPUPSTART, Handle, OBJID_CLIENT, 0);
   end else begin
@@ -479,6 +502,8 @@ end;
 
 procedure TTrayNotifyWindow.TrayIconClick(Sender: TObject);
 begin
+  if FIsLockedOpened then Exit;
+  
   if IsWindowVisible(Handle) then
     ShowWindow(Handle, SW_HIDE) // Скрываем форму
   else
@@ -495,8 +520,10 @@ begin
   else
     FSystemBorder := sbDefault;
 
+  if IsWindows10OrGreater then ShowWindow(Handle, SW_HIDE);
   InterfaceBuild;
   DoSystemBorderChanged(FSystemBorder);
+  if IsWindows10OrGreater and FIsLockedOpened then ShowWindow(Handle, SW_RESTORE);
 end;
 
 procedure TTrayNotifyWindow.SetOnSystemBorderChanged(

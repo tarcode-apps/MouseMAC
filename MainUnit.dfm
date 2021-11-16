@@ -233,6 +233,28 @@ object MouseExForm: TMouseExForm
       Caption = 'Autorun'
       OnClick = TrayMenuAutorunClick
     end
+    object TrayMenuAutoUpdate: TMenuItem
+      Caption = 'AutoUpdate'
+      object TrayMenuAutoUpdateEnable: TMenuItem
+        AutoCheck = True
+        Caption = 'Enable'
+        OnClick = TrayMenuAutoUpdateEnableClick
+      end
+      object TrayMenuAutoUpdateCheck: TMenuItem
+        Caption = 'Check'
+        OnClick = TrayMenuAutoUpdateCheckClick
+      end
+    end
+    object TrayMenuLanguage: TMenuItem
+      Caption = 'Language'
+      object TrayMenuLanguageSystem: TMenuItem
+        Caption = 'System'
+        OnClick = TrayMenuLanguageItemClick
+      end
+      object TrayMenuSeparator5: TMenuItem
+        Caption = '-'
+      end
+    end
     object TrayMenuHorizontalScrollOnShiftDown: TMenuItem
       AutoCheck = True
       Caption = 'HorizontalScrollOnShiftDown'
@@ -253,6 +275,10 @@ object MouseExForm: TMouseExForm
     object TrayMenuWebsite: TMenuItem
       Caption = 'Website'
       OnClick = TrayMenuWebsiteClick
+    end
+    object TrayMenuLicense: TMenuItem
+      Caption = 'License'
+      OnClick = TrayMenuLicenseClick
     end
     object TrayMenuSeparator4: TMenuItem
       Caption = '-'

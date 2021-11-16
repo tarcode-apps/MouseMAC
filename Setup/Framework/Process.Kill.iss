@@ -1,5 +1,5 @@
 ﻿#ifndef _ProcessKill
-	#define _FrameworkTemplate
+	#define _ProcessKill
 
 #include "Windows.Api.iss"
 

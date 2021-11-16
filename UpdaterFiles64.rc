@@ -1,0 +1,13 @@
+FileUpdate0 RCDATA "__temp\\MouseMAC64.gzip"
+
+STRINGTABLE
+{
+	8000, "MouseMAC64.exe" // OLD MAIN FILE
+	8001, "MouseMAC64.exe" // NEW MAIN FILE
+	
+	// UPDATE FILES
+	8002, "MouseMAC64.exe"
+
+	// MUTEX
+	8950, "MouseMACMutex"
+}

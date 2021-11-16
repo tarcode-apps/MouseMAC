@@ -95,7 +95,7 @@ begin
 	if IsPortableOnly then
 		InstallType := itPortable;
 	
-	_WpInstallType := CreateCustomPage(wpWelcome, CustomMessage('InstallType'), CustomMessage('InstallTypeDescription'));
+	_WpInstallType := CreateCustomPage(wpLicense, CustomMessage('InstallType'), CustomMessage('InstallTypeDescription'));
 	
 	_AllUserRadioButton := TNewRadioButton.Create(WizardForm);
 	with _AllUserRadioButton do begin

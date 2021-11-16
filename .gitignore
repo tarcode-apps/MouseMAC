@@ -47,5 +47,6 @@ __recovery/
 
 # CorelDRAW
 Резервная_копия_*.cdr
+Backup_copy_*.cdr
 
 *.gzip

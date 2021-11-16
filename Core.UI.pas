@@ -204,7 +204,12 @@ begin
   inherited Create;
   FAdditionalSize := AdditionalSize;
   FSizeType := SizeType;
-  FSizeValue := 0;
+
+  case SizeType of
+    stMax: FSizeValue := 0;
+    stMin: FSizeValue := Integer.MaxValue;
+    else raise Exception.Create('Unsupported SizeType');
+  end;
 end;
 
 function THeightSelector.Add(Size: Integer): Integer;

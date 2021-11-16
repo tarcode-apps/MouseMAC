@@ -1,4 +1,4 @@
-#ifndef _SetupElevator
+﻿#ifndef _SetupElevator
 	#define _SetupElevator
 
 #include "Windows.Api.iss"

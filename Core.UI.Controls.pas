@@ -3,8 +3,8 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, Winapi.CommCtrl,
-  System.Classes, System.SysUtils,
+  Winapi.Windows, Winapi.Messages, Winapi.CommCtrl, Winapi.UxTheme,
+  System.Classes, System.SysUtils, System.Win.Registry,
   Vcl.Forms, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Graphics,
   Vcl.Controls, Vcl.Themes,
   Versions.Helpers;
@@ -13,12 +13,20 @@ type
   TCompatibleForm = class(TForm)
   strict private
     FWindowCreated: Boolean;
+
+    function GetSystemUsesLightTheme: Boolean;
+  private
+    FIsSystemUsesLightTheme: Boolean;
   protected
     procedure DoCreate; override;
+    procedure DoSystemUsesLightThemeChange(LightTheme: Boolean); virtual;
+
+    procedure WMSettingChange(var Msg: TMessage); message WM_SETTINGCHANGE;
   public
     constructor Create(AOwner: TComponent); override;
 
     property WindowCreated: Boolean read FWindowCreated;
+    property IsSystemUsesLightTheme: Boolean read FIsSystemUsesLightTheme;
   end;
 
 type
@@ -34,6 +42,8 @@ type
     procedure SetShapeColor(const Value: TColor);
   protected
     procedure Paint; override;
+    procedure AlignControls(AControl: TControl; var Rect: TRect); override;
+    procedure RequestAlign; override;
   published
     property Shape: TPanelShape read FShape write SetShape default psNone;
     property ShapeColor: TColor read FShapeColor write SetShapeColor
@@ -80,6 +90,7 @@ type
   // CheckBox с дополнительным пробелом перед текстом и свойством AutoSize
   TCheckBox = class(Vcl.StdCtrls.TCheckBox)
   private
+    FThemeActive: Boolean;
     FAdditionalSpace: Boolean;
     function GetText: TCaption;
     procedure SetText(const Value: TCaption);
@@ -88,9 +99,11 @@ type
     procedure SetAutoSize(const Value: Boolean); reintroduce;
     procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
+    procedure WMThemeChanged(var Message: TMessage); message WM_THEMECHANGED;
   protected
     function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
   published
+    constructor Create(AOwner: TComponent); override;
     property AutoSize: Boolean read GetAutoSize write SetAutoSize;
     property Caption read GetText write SetText;
     property AdditionalSpace: Boolean read FAdditionalSpace write SetAdditionalSpace;
@@ -122,6 +135,13 @@ type
   end;
 
 type
+  TLabel = class(Vcl.StdCtrls.TLabel)
+  protected
+    procedure AdjustBounds; override;
+    procedure Resize; override;
+  end;
+
+type
   // StaticText с функцией ссылки
   TLinkStyle = (lsNormal, lsHover);
   TStaticText = class(Vcl.StdCtrls.TStaticText)
@@ -136,6 +156,7 @@ type
     procedure LinkFontChange(Sender: TObject);
   protected
     procedure KeyPress(var Key: Char); override;
+    procedure CreateWnd; override;
     function GetLinkStyleColor(Style: TLinkStyle): TColor; virtual;
     procedure ApplyLinkStyle(Style: TLinkStyle);
     procedure UpdateLinkStyle;
@@ -157,6 +178,14 @@ type
   TTabControl = class(Vcl.ComCtrls.TTabControl)
   published
     property AutoSize;
+  end;
+
+type
+  // TGroupBox с функцией AutoSize
+  TGroupBox = class(Vcl.StdCtrls.TGroupBox)
+  published
+    property AutoSize;
+    procedure AlignControls(AControl: TControl; var Rect: TRect); override;
   end;
 
 type
@@ -193,6 +222,7 @@ var
   NewHFont: HFONT;
 begin
   FWindowCreated := False;
+  FIsSystemUsesLightTheme := GetSystemUsesLightTheme;
 
   inherited;
 
@@ -214,6 +244,45 @@ begin
 
   // Окно успешно создано
   FWindowCreated := True;
+end;
+
+procedure TCompatibleForm.DoSystemUsesLightThemeChange(LightTheme: Boolean);
+begin
+  FIsSystemUsesLightTheme := LightTheme;
+end;
+
+procedure TCompatibleForm.WMSettingChange(var Msg: TMessage);
+var
+  IsSystemLightTheme: Boolean;
+begin
+  if LPCTSTR(Msg.LParam) = 'ImmersiveColorSet' then
+  begin
+    IsSystemLightTheme := GetSystemUsesLightTheme;
+    if IsSystemLightTheme <> FIsSystemUsesLightTheme then
+      DoSystemUsesLightThemeChange(IsSystemLightTheme);
+  end;
+end;
+
+function TCompatibleForm.GetSystemUsesLightTheme: Boolean;
+var
+  Registry: TRegistry;
+begin
+  Result := False;
+  if not IsWindows10Update1903OrGreater then Exit;
+
+  Registry := TRegistry.Create;
+  try
+    Registry.RootKey := HKEY_CURRENT_USER;
+    if Registry.OpenKeyReadOnly('\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize') then
+    try
+      if Registry.ValueExists('SystemUsesLightTheme') then
+        Result := Registry.ReadBool('SystemUsesLightTheme');
+    finally
+      Registry.CloseKey;
+    end;
+  finally
+    Registry.Free;
+  end;
 end;
 
 
@@ -256,6 +325,18 @@ begin
         Canvas.LineTo(Width - 1, Height);
       end;
   end;
+end;
+
+procedure TPanel.RequestAlign;
+begin
+  inherited;
+  Realign;
+end;
+
+procedure TPanel.AlignControls(AControl: TControl; var Rect: TRect);
+begin
+  inherited;
+  AdjustSize;
 end;
 
 procedure TPanel.SetShape(const Value: TPanelShape);
@@ -387,6 +468,12 @@ end;
 
 { TCheckBox }
 
+constructor TCheckBox.Create(AOwner: TComponent);
+begin
+  inherited;
+  FThemeActive := IsThemeActive;
+end;
+
 function TCheckBox.GetText: TCaption;
 begin
   if AdditionalSpace then
@@ -456,7 +543,10 @@ begin
     SaveFont := SelectObject(DC, Font.Handle);
     DrawFlags := DT_CENTER or DT_VCENTER or DT_HIDEPREFIX or DT_CALCRECT or WordBreak[WordWrap];
     if DrawText(DC, PChar(inherited Caption), -1, ContentRect, DrawFlags) <> 0 then begin
-      NewWidth := ContentRect.Width + Padding.Left + Padding.Right + GetSystemMetrics(SM_CXMENUCHECK);
+      NewWidth := ContentRect.Width + Padding.Left + Padding.Right + GetSystemMetrics(SM_CXMENUCHECK) + 3;
+      if not FThemeActive then
+        NewWidth := NewWidth + 2*GetSystemMetrics(SM_CXEDGE);
+
       NewHeight := ContentRect.Height + Padding.Top + Padding.Bottom;
       if GetSystemMetrics(SM_CYMENUCHECK) > NewHeight then
         NewHeight := GetSystemMetrics(SM_CYMENUCHECK);
@@ -479,6 +569,12 @@ procedure TCheckBox.CMTextChanged(var Message: TMessage);
 begin
   inherited;
   AdjustSize;
+end;
+
+procedure TCheckBox.WMThemeChanged(var Message: TMessage);
+begin
+  FThemeActive := IsThemeActive;
+  inherited;
 end;
 
 
@@ -561,6 +657,105 @@ begin
 end;
 
 
+{ TLabel }
+
+procedure TLabel.AdjustBounds;
+const
+  WordWraps: array[Boolean] of Word = (0, DT_WORDBREAK);
+  AccelChars: array [Boolean] of UINT = (DT_HIDEPREFIX, 0);
+
+var
+  DC: HDC;
+  X: Integer;
+  R: TRect;
+  AAlignment: TAlignment;
+  LSin,LCos: Double;
+  LRcx,LRcy: Integer;
+  p1:TPoint;
+  LBox: TRect;
+
+  procedure CalcBox(AIdx, X,Y: Integer; Init: Boolean=FALSE);
+  begin
+    if Init then
+      LBox := Rect(X, Y, X, Y)
+    else
+    begin
+      if X < LBox.Left then
+        LBox.Left := X
+      else if X > LBox.Right then
+        LBox.Right := X;
+
+      if Y < LBox.Top then
+        LBox.Top := Y
+      else if Y > LBox.Bottom then
+        LBox.Bottom := Y;
+    end;
+  end;
+begin
+  if not (csReading in ComponentState) and AutoSize then
+  begin
+    R := ClientRect;
+    DC := GetDC(0);
+    try
+      Canvas.Handle := DC;
+      if Font.Orientation = 0 then
+        DoDrawText(R, DT_EXPANDTABS or DT_CALCRECT or WordWraps[WordWrap] or AccelChars[ShowAccelChar])
+      else
+        DoDrawText(R, DT_EXPANDTABS or DT_CALCRECT);
+      Canvas.Handle := 0;
+    finally
+      ReleaseDC(0, DC);
+    end;
+    if Font.Orientation = 0 then
+    begin
+      X := Left;
+      AAlignment := Alignment;
+      if UseRightToLeftAlignment then
+        ChangeBiDiModeAlignment(AAlignment);
+      if AAlignment = taRightJustify then
+        Inc(X, Width - R.Right);
+
+      if HasParent then
+        case Align of
+          alTop, alBottom: SetBounds(Left, Top, Width, R.Height);
+          alLeft, alRight: SetBounds(X, Top, R.Width, Height);
+          else SetBounds(X, Top, R.Width, R.Height);
+        end
+      else
+        SetBounds(X, Top, R.Width, R.Height);
+    end
+    else
+    begin
+      LSin := Sin((Font.Orientation / 10) * Pi / 180);
+      LCos := Cos((Font.Orientation / 10) * Pi / 180);
+      LRcx := R.Left + R.Width Div 2;
+      LRcy := R.Top + R.Height Div 2;
+      p1.x := (R.Left - LRcx);
+      p1.Y := (R.Top - LRcy);
+      CalcBox(0, Round(p1.X * LCos - p1.Y * LSin) + LRcx,
+      Round(p1.X * LSin - p1.Y * LCos) + LRcy, TRUE);
+      p1.X := (R.Right - LRcx);
+      CalcBox(1, Round(p1.X * LCos - p1.Y * LSin) + LRcx,
+      Round(p1.X * LSin - p1.Y * LCos) + LRcy);
+      p1.Y := (R.Bottom - LRcy);
+      CalcBox(2, Round(p1.X * LCos - p1.Y * LSin) + LRcx,
+      Round(p1.X * LSin - p1.Y * LCos) + LRcy);
+      p1.X := (R.Left - LRcx);
+      CalcBox(3, Round(p1.X * LCos - p1.Y * LSin) + LRcx,
+      Round(p1.X * LSin - p1.Y * LCos) + LRcy);
+      OffsetRect(LBox, -LBox.Left, -LBox.Top);
+      SetBounds(Left + LBox.Left, Top + LBox.Top, LBox.Right, LBox.Bottom);
+    end;
+  end;
+end;
+
+procedure TLabel.Resize;
+begin
+  inherited;
+  AdjustBounds;
+end;
+
+
 { TStaticText }
 
 constructor TStaticText.Create(AOwner: TComponent);
@@ -577,6 +772,13 @@ begin
   FHideFocus := False;
   FLinkMode := False;
   ParentBackground := True;
+end;
+
+procedure TStaticText.CreateWnd;
+begin
+  inherited;
+  AutoSize := False;
+  AutoSize := True;
 end;
 
 destructor TStaticText.Destroy;
@@ -915,6 +1117,14 @@ begin
   Perform(CB_SETDROPPEDWIDTH, MaxItemWidth, 0);
 
   inherited;
+end;
+
+{ TGroupBox }
+
+procedure TGroupBox.AlignControls(AControl: TControl; var Rect: TRect);
+begin
+  inherited;
+  AdjustSize;
 end;
 
 end.

@@ -105,8 +105,8 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_MajorVer>2</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=2.0.0.0;InternalName=;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=;ProductName=Mouse MAC;ProductVersion=2.0.0.0;Comments=Debug;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.0;InternalName=;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=;ProductName=Mouse MAC;ProductVersion=3.0.0.0;Comments=Debug;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
@@ -117,8 +117,8 @@
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=2.0.0.0;InternalName=;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=;ProductName=Mouse MAC;ProductVersion=2.0.0.0;Comments=Debug;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
-        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.0;InternalName=;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=;ProductName=Mouse MAC;ProductVersion=3.0.0.0;Comments=Debug;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
     </PropertyGroup>
@@ -135,7 +135,7 @@
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\$(OUTPUTNAME)32$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.42;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)32.exe;ProductName=Mouse MAC 32-bit;ProductVersion=2.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.42;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)32.exe;ProductName=Mouse MAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
@@ -151,7 +151,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.42;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)64.exe;ProductName=Mouse MAC 64-bit;ProductVersion=2.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.42;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2021;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)64.exe;ProductName=Mouse MAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -163,11 +163,17 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <RcCompile Include="Localization\English\EnglishAutorunMessage.rc">
             <Form>EnglishAutorunMessage.res</Form>
         </RcCompile>
+        <RcCompile Include="Localization\English\EnglishAutoUpdate.rc">
+            <Form>EnglishAutoUpdate.res</Form>
+        </RcCompile>
         <RcCompile Include="Localization\English\EnglishMainLanguage.rc">
             <Form>EnglishMainLanguage.res</Form>
         </RcCompile>
         <RcCompile Include="Localization\Russian\RussianAutorunMessage.rc">
             <Form>RussianAutorunMessage.res</Form>
+        </RcCompile>
+        <RcCompile Include="Localization\Russian\RussianAutoUpdate.rc">
+            <Form>RussianAutoUpdate.res</Form>
         </RcCompile>
         <RcCompile Include="Localization\Russian\RussianMainLanguage.rc">
             <Form>RussianMainLanguage.res</Form>
@@ -176,7 +182,16 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCCReference Include="Autorun\Autorun.Providers.TaskScheduler2.pas"/>
         <DCCReference Include="Autorun\Autorun.Providers.Registry.pas"/>
         <DCCReference Include="Autorun\Autorun.Manager.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.Params.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.Scheduler.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.VersionDefinition.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.Window.NotFound.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.Window.Notify.pas"/>
+        <DCCReference Include="AutoUpdate\AutoUpdate.Window.Update.pas"/>
         <DCCReference Include="Libs\TaskSchd.pas"/>
+        <DCCReference Include="Libs\WinHttp_TLB.pas"/>
+        <DCCReference Include="Core.Language.Controls.pas"/>
         <DCCReference Include="Core.Language.pas"/>
         <DCCReference Include="Core.Startup.pas"/>
         <DCCReference Include="Core.Startup.Tasks.pas"/>
@@ -184,6 +199,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCCReference Include="Core.UI.Controls.pas"/>
         <DCCReference Include="Core.UI.Notifications.pas"/>
         <DCCReference Include="Desktop.pas"/>
+        <DCCReference Include="Helpers.License.pas"/>
         <DCCReference Include="Helpers.Services.pas"/>
         <DCCReference Include="Helpers.Wts.pas"/>
         <DCCReference Include="MainUnit.pas">
@@ -205,6 +221,16 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <RcItem Include="Icon\Enable.ico">
             <ResourceType>ICON</ResourceType>
             <ResourceId>RIcon_Enable</ResourceId>
+        </RcItem>
+        <RcItem Include="LICENSE.txt">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LicenseFile1033</ResourceId>
+        </RcItem>
+        <RcItem Include="Localization\Russian\License.txt">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LicenseFile1049</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -282,7 +308,19 @@ $(PostBuildEvent)]]></PostBuildEvent>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="Localization\Russian\License.txt" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Icon\Enable.ico" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="LICENSE.txt" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win64">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

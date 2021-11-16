@@ -1,2 +1,4 @@
 RIcon_Disable ICON "Icon\\Disable.ico"
 RIcon_Enable ICON "Icon\\Enable.ico"
+LicenseFile1033 RCDATA "LICENSE.txt"
+LicenseFile1049 RCDATA "Localization\\Russian\\License.txt"
