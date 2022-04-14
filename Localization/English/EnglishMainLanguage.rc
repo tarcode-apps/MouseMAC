@@ -18,6 +18,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 22, "Listbox smooth scrolling"
 
 30, "&Horizontal scrolling with \nthe Shift key"
+31, "Scroll &sensitivity setting"
 
 40, "https://mousemac.tarcode.ru/update.uurl"
 41, "Automatic &updates"
@@ -29,6 +30,11 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 150, "&Language"
 151, "&Default"
+
+300, "Sensitivity setting"
+301, "Vertical scroll"
+302, "Horizontal scroll"
+303, "Reset to default"
 
 224, "Li&cense"
 }

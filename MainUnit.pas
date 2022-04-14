@@ -15,6 +15,7 @@ uses
   Core.UI, Core.UI.Controls, Core.UI.Notifications,
   Desktop,
   Mouse.Mac,
+  Sensitivity.Window,
   Tray.Notify.Window, Tray.Notify.Controls,
   Versions, Versions.Info, Versions.Helpers,
   Helpers.License;
@@ -30,6 +31,8 @@ const
   REG_LanguageId = 'LanguageId';
   REG_Enable = 'Enable';
   REG_Invert = 'Invert';
+  REG_VerticalSensitivity = 'VerticalSensitivity';
+  REG_HorizontalSensitivity = 'HorizontalSensitivity';
   REG_HorizontalScrollOnShiftDown = 'HorizontalScrollOnShiftDown';
 
 type
@@ -41,6 +44,8 @@ type
     Enable: Boolean;
     Invert: Boolean;
     HorizontalScrollOnShiftDown: Boolean;
+    VerticalSensitivity: Double;
+    HorizontalSensitivity: Double;
   end;
 
   TUIInfo = (UIInfoHide, UIInfoSN);
@@ -66,6 +71,7 @@ type
     TrayMenuAutorun: TMenuItem;
     TrayMenuListboxSmoothScrolling: TMenuItem;
     TrayMenuHorizontalScrollOnShiftDown: TMenuItem;
+    TrayMenuSensitivity: TMenuItem;
     TrayMenuWebsite: TMenuItem;
     TrayMenuLicense: TMenuItem;
     TrayMenuClose: TMenuItem;
@@ -95,6 +101,7 @@ type
     procedure TrayMenuAutoUpdateCheckClick(Sender: TObject);
     procedure TrayMenuLanguageItemClick(Sender: TObject);
     procedure TrayMenuHorizontalScrollOnShiftDownClick(Sender: TObject);
+    procedure TrayMenuSensitivityClick(Sender: TObject);
     procedure TrayMenuListboxSmoothScrollingClick(Sender: TObject);
     procedure TrayMenuWebsiteClick(Sender: TObject);
     procedure TrayMenuLicenseClick(Sender: TObject);
@@ -186,7 +193,7 @@ begin
 
   CheckBoxEnable.AutoSize := True;
   CheckBoxInvert.AutoSize := True;
-  CheckBoxAutorun.AutoSize := True;
+  CheckBoxHorizontalScrollWithShift.AutoSize := True;
 
   UIInfo := Low(UIInfo);
 
@@ -219,6 +226,8 @@ begin
   TMouseMac.Invert := Conf.Invert;
   TMouseMac.Enable := Conf.Enable;
   TMouseMac.HorizontalScrollOnShiftDown := Conf.HorizontalScrollOnShiftDown;
+  TMouseMac.VerticalSensitivity := Conf.VerticalSensitivity;
+  TMouseMac.HorizontalSensitivity := Conf.HorizontalSensitivity;
 
   // Инициализация TDesktopManager
   TDesktopManager.OnUIEffects := DesktopManagerUIEffects;
@@ -383,6 +392,11 @@ procedure TMouseExForm.TrayMenuHorizontalScrollOnShiftDownClick(
 begin
   if LockerHorizontalScrollOnShiftDown.IsLocked then Exit;
   TMouseMac.HorizontalScrollOnShiftDown := (Sender as TMenuItem).Checked;
+end;
+
+procedure TMouseExForm.TrayMenuSensitivityClick(Sender: TObject);
+begin
+  TSensitivityWindow.Open;
 end;
 
 procedure TMouseExForm.TrayMenuListboxSmoothScrollingClick(Sender: TObject);
@@ -578,6 +592,7 @@ begin
   TrayMenuClose.Caption     := TLang[9];
   TrayMenuListboxSmoothScrolling.Caption      := TLang[22]; // Гладкое прокручивание списков
   TrayMenuHorizontalScrollOnShiftDown.Caption := TLang[30]; // Горизонтальная прокрутка с клавишей Shift
+  TrayMenuSensitivity.Caption                 := TLang[31]; // Sensitivity setting
 
   TrayMenuAutoUpdate.Caption        := TLang[41]; // Automatic updates
   TrayMenuAutoUpdateEnable.Caption  := TLang[42]; // Turn on automatic updates
@@ -655,6 +670,8 @@ begin
   Result.Enable:= True;
   Result.Invert:= False;
   Result.HorizontalScrollOnShiftDown:= False;
+  Result.VerticalSensitivity := TMouseMac.DefaultVerticalSensitivity;
+  Result.HorizontalSensitivity := TMouseMac.DefaultHorizontalSensitivity;
 end;
 
 function TMouseExForm.LoadConfig: TConfig;
@@ -674,6 +691,14 @@ var
   begin
     if Registry.ValueExists(Name) then
       Result := Registry.ReadInteger(Name)
+    else
+      Result := Def;
+  end;
+
+  function ReadDoubleDef(const Name: string; const Def: Double): Double;
+  begin
+    if Registry.ValueExists(Name) then
+      Result := Registry.ReadFloat(Name)
     else
       Result := Def;
   end;
@@ -698,9 +723,11 @@ begin
     Result.AutoUpdateEnable := ReadBoolDef(REG_AutoUpdateEnable, Default.AutoUpdateEnable);
     Result.AutoUpdateLastCheck := StrToDateTimeDef(ReadStringDef(REG_AutoUpdateLastCheck, ''), Default.AutoUpdateLastCheck);
     Result.AutoUpdateSkipVersion := ReadStringDef(REG_AutoUpdateSkipVersion, Default.AutoUpdateSkipVersion);
-    Result.Enable:= ReadBoolDef(REG_Enable, True);
-    Result.Invert:= ReadBoolDef(REG_Invert, False);
-    Result.HorizontalScrollOnShiftDown:= ReadBoolDef(REG_HorizontalScrollOnShiftDown, False);
+    Result.Enable:= ReadBoolDef(REG_Enable, Default.Enable);
+    Result.Invert:= ReadBoolDef(REG_Invert, Default.Invert);
+    Result.HorizontalScrollOnShiftDown:= ReadBoolDef(REG_HorizontalScrollOnShiftDown, Default.HorizontalScrollOnShiftDown);
+    Result.VerticalSensitivity:= ReadDoubleDef(REG_VerticalSensitivity, Default.VerticalSensitivity);
+    Result.HorizontalSensitivity:= ReadDoubleDef(REG_HorizontalSensitivity, Default.HorizontalSensitivity);
     // end read config
 
     Registry.CloseKey;
@@ -728,6 +755,8 @@ begin
       Registry.WriteBool(REG_Enable, Conf.Enable);
       Registry.WriteBool(REG_Invert, Conf.Invert);
       Registry.WriteBool(REG_HorizontalScrollOnShiftDown, Conf.HorizontalScrollOnShiftDown);
+      Registry.WriteFloat(REG_VerticalSensitivity, Conf.VerticalSensitivity);
+      Registry.WriteFloat(REG_HorizontalSensitivity, Conf.HorizontalSensitivity);
       // end write config
 
       Registry.CloseKey;
@@ -748,6 +777,8 @@ begin
   Conf.Enable := TMouseMac.Enable;
   Conf.Invert := TMouseMac.Invert;
   Conf.HorizontalScrollOnShiftDown := TMouseMac.HorizontalScrollOnShiftDown;
+  Conf.VerticalSensitivity := TMouseMac.VerticalSensitivity;
+  Conf.HorizontalSensitivity := TMouseMac.HorizontalSensitivity;
 
   SaveConfig(Conf);
 end;

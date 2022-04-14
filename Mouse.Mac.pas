@@ -90,6 +90,9 @@ type
   end;
 
   TMouseMac = class
+  public const
+    DefaultVerticalSensitivity = 1.0;
+    DefaultHorizontalSensitivity = 1.0;
   private const
     WH_MOUSE_LL = 14;
     HC_ACTION = 0;
@@ -117,6 +120,8 @@ type
     class var FEnable: Boolean;
     class var FInvert: Boolean;
     class var FHorizontalScrollOnShiftDown: Boolean;
+    class var FVerticalSensitivity: Double;
+    class var FHorizontalSensitivity: Double;
     class var FOnStateChange: TEventStateChange;
     class var FOnInvertChange: TEventStateChange;
     class var FOnHorizontalScrollOnShiftDownChange: TEventStateChange;
@@ -139,6 +144,8 @@ type
     class property Enable: Boolean read FEnable write SetEnable;
     class property Invert: Boolean read FInvert write SetInvert;
     class property HorizontalScrollOnShiftDown: Boolean read FHorizontalScrollOnShiftDown write SetHorizontalScrollOnShiftDown;
+    class property VerticalSensitivity: Double read FVerticalSensitivity write FVerticalSensitivity;
+    class property HorizontalSensitivity: Double read FHorizontalSensitivity write FHorizontalSensitivity;
     class property OnStateChange: TEventStateChange read FOnStateChange write SetOnStateChange;
     class property OnInvertChange: TEventStateChange read FOnInvertChange write SetOnInvertChange;
     class property OnHorizontalScrollOnShiftDownChange: TEventStateChange read FOnHorizontalScrollOnShiftDownChange write SetOnHorizontalScrollOnShiftDownChange;
@@ -304,6 +311,11 @@ begin
           if HiByte(GetKeyState(VK_CONTROL)) <> 0 then KeyState := KeyState or MK_CONTROL;
           if HiByte(GetKeyState(VK_MBUTTON)) <> 0 then KeyState := KeyState or MK_MBUTTON;
 
+          if (WheelMessage = WM_MOUSEHWHEEL) or (IsShiftDown and FHorizontalScrollOnShiftDown) then
+            WheelDelta := Round(WheelDelta * FHorizontalSensitivity)
+          else
+            WheelDelta := Round(WheelDelta * FVerticalSensitivity);
+
           wP := MakeWParam(KeyState, WheelDelta);
           lP := MakeLParam(PMsLl^.pt.X, PMsLl^.pt.Y);
 
@@ -366,6 +378,8 @@ begin
   FEnable := False;
   FInvert := False;
   FHorizontalScrollOnShiftDown := False;
+  FVerticalSensitivity := DefaultVerticalSensitivity;
+  FHorizontalSensitivity := DefaultHorizontalSensitivity;
   HThread := 0;
 end;
 

@@ -260,6 +260,10 @@ object MouseExForm: TMouseExForm
       Caption = 'HorizontalScrollOnShiftDown'
       OnClick = TrayMenuHorizontalScrollOnShiftDownClick
     end
+    object TrayMenuSensitivity: TMenuItem
+      Caption = 'Sensitivity'
+      OnClick = TrayMenuSensitivityClick
+    end
     object TrayMenuSeparator2: TMenuItem
       Caption = '-'
     end

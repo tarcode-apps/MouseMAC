@@ -43,6 +43,7 @@ uses
   Helpers.Wts in 'Helpers.Wts.pas',
   MainUnit in 'MainUnit.pas' {MouseExForm},
   Mouse.Mac in 'Mouse.Mac.pas',
+  Sensitivity.Window in 'Sensitivity.Window.pas' {SensitivityWindow},
   Tray.Helpers in 'Tray.Helpers.pas',
   Tray.Icon in 'Tray.Icon.pas',
   Tray.Icon.Notifications in 'Tray.Icon.Notifications.pas',
