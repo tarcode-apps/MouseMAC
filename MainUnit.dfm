@@ -192,11 +192,11 @@ object MouseExForm: TMouseExForm
       Margins.Right = 16
       Margins.Bottom = 4
       Align = alTop
-      Caption = 'CheckBoxInvert'
+      Caption = 'Invert'
       TabOrder = 1
       OnClick = CheckBoxInvertClick
     end
-    object CheckBoxAutorun: TCheckBox
+    object CheckBoxHorizontalScrollWithShift: TCheckBox
       AlignWithMargins = True
       Left = 20
       Top = 76
@@ -207,9 +207,10 @@ object MouseExForm: TMouseExForm
       Margins.Right = 16
       Margins.Bottom = 4
       Align = alTop
-      Caption = 'CheckBoxAutorun'
+      Caption = 'HorizontalScrollWithShift'
       TabOrder = 2
-      OnClick = CheckBoxAutorunClick
+      WordWrap = True
+      OnClick = CheckBoxHorizontalScrollWithShiftClick
     end
   end
   object PopupMenuTray: TPopupMenu

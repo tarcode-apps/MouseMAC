@@ -17,7 +17,7 @@ LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 
 22, "Гладкое прокручивание списков"
 
-30, "&Горизонтальная прокрутка с клавишей Shift"
+30, "&Горизонтальная прокрутка \nс клавишей Shift"
 
 40, "https://mousemac.tarcode.ru/update.uurl"
 41, "Автоматическое &обновление"

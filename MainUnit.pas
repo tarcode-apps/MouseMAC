@@ -56,7 +56,7 @@ type
     LabelConfig: TLabel;
     CheckBoxEnable: TCheckBox;
     CheckBoxInvert: TCheckBox;
-    CheckBoxAutorun: TCheckBox;
+    CheckBoxHorizontalScrollWithShift: TCheckBox;
     TrayMenuAutoUpdate: TMenuItem;
     TrayMenuAutoUpdateEnable: TMenuItem;
     TrayMenuAutoUpdateCheck: TMenuItem;
@@ -102,7 +102,7 @@ type
 
     procedure CheckBoxEnableClick(Sender: TObject);
     procedure CheckBoxInvertClick(Sender: TObject);
-    procedure CheckBoxAutorunClick(Sender: TObject);
+    procedure CheckBoxHorizontalScrollWithShiftClick(Sender: TObject);
 
     procedure TrayNotifyUpdateAvalible(Sender: TObject; Value: Integer);
     procedure TrayNotifyUpdateFail(Sender: TObject; Value: Integer);
@@ -298,11 +298,10 @@ begin
   TMouseMac.Invert := (Sender as TCheckBox).Checked;
 end;
 
-procedure TMouseExForm.CheckBoxAutorunClick(Sender: TObject);
+procedure TMouseExForm.CheckBoxHorizontalScrollWithShiftClick(Sender: TObject);
 begin
-  if LockerAutorun.IsLocked then Exit;
-  AutorunManager.SetAutorunEx((Sender as TCheckBox).Checked);
-  SetForegroundWindow(TrayIcon.Handle);
+  if LockerHorizontalScrollOnShiftDown.IsLocked then Exit;
+  TMouseMac.HorizontalScrollOnShiftDown := (Sender as TCheckBox).Checked;
 end;
 
 procedure TMouseExForm.TrayMenuMouseClick(Sender: TObject);
@@ -457,6 +456,7 @@ begin
   LockerHorizontalScrollOnShiftDown.Lock;
   try
     TrayMenuHorizontalScrollOnShiftDown.Checked := State;
+    CheckBoxHorizontalScrollWithShift.Checked := State;
   finally
     LockerHorizontalScrollOnShiftDown.Unlock;
   end;
@@ -531,7 +531,6 @@ procedure TMouseExForm.AutorunManagerAutorun(Sender: TObject; Enable: Boolean);
 begin
   LockerAutorun.Lock;
   try
-    CheckBoxAutorun.Checked := Enable;
     TrayMenuAutorun.Checked := Enable;
   finally
     LockerAutorun.Unlock;
@@ -569,7 +568,7 @@ begin
   LabelConfig.Caption       := TLang[2];
   CheckBoxEnable.Caption    := TLang[3];
   CheckBoxInvert.Caption    := TLang[7];
-  CheckBoxAutorun.Caption   := TLang[6];
+  CheckBoxHorizontalScrollWithShift.Caption := TLang[30]; // Горизонтальная прокрутка с клавишей Shift
   Link.Caption              := TLang[8];
   TrayMenuMouse.Caption     := TLang[8];
   TrayMenuEnable.Caption    := TLang[3];

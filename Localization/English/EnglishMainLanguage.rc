@@ -17,7 +17,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 22, "Listbox smooth scrolling"
 
-30, "&Horizontal scrolling with the Shift key"
+30, "&Horizontal scrolling with \nthe Shift key"
 
 40, "https://mousemac.tarcode.ru/update.uurl"
 41, "Automatic &updates"
