@@ -21,7 +21,6 @@ object MouseExForm: TMouseExForm
   OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 15
   object PanelTop: TPanel
     Left = 0
