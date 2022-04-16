@@ -20,7 +20,8 @@ type
     wwmScroll,
     wwmSkipHScroll,
     wwmHScrollAsHWheel,
-    wwmHInvert);
+    wwmHInvert,
+    wwmShiftScrollInvert);
 
   TWindowWheelInfo = record
   strict private type
@@ -50,11 +51,12 @@ type
     function GetRealWheelWindow(Index: TPoint): HWND; inline;
     function GetExePath: string; inline;
     function GetExeName: string; inline;
-    function GetWheelMethods(HScrollChecking: Boolean): TWindowWheelMethods; inline;
+    function GetWheelMethods(HScrollChecking: Boolean; var WheelHorizontalSensitivity: Double): TWindowWheelMethods; inline;
   public
     Window: HWND;
     WheelMethods: TWindowWheelMethods;
     WheelWindow: HWND;
+    WheelHorizontalSensitivity: Double;
 
     constructor Create(aWindow: HWND; aPoint: TPoint; aHScrollChecking: Boolean);
     
@@ -282,6 +284,9 @@ begin
                      FHorizontalScrollOnShiftDown and
                      not (wwmSkipHScroll in FPreviousWindowWheelInfo.WheelMethods);
 
+        if (WheelMessage = WM_MOUSEWHEEL) and IsHScroll and (wwmShiftScrollInvert in FPreviousWindowWheelInfo.WheelMethods) then
+          WheelDelta := - WheelDelta;
+
         if IsHScroll then WheelMessage := WM_MOUSEHWHEEL;
 
         if (WheelMessage = WM_MOUSEHWHEEL) and (wwmHInvert in FPreviousWindowWheelInfo.WheelMethods) then
@@ -312,7 +317,7 @@ begin
           if HiByte(GetKeyState(VK_MBUTTON)) <> 0 then KeyState := KeyState or MK_MBUTTON;
 
           if (WheelMessage = WM_MOUSEHWHEEL) or (IsShiftDown and FHorizontalScrollOnShiftDown) then
-            WheelDelta := Round(WheelDelta * FHorizontalSensitivity)
+            WheelDelta := Round(WheelDelta * FHorizontalSensitivity * FPreviousWindowWheelInfo.WheelHorizontalSensitivity)
           else
             WheelDelta := Round(WheelDelta * FVerticalSensitivity);
 
@@ -394,11 +399,12 @@ end;
 constructor TWindowWheelInfo.Create(aWindow: HWND; aPoint: TPoint; aHScrollChecking: Boolean);
 begin
   Window := aWindow;
+  WheelHorizontalSensitivity := 1.0;
   FAncestorRoot := 0;
   FAncestorRootName := '';
   FClassName := '';
 
-  WheelMethods := GetWheelMethods(aHScrollChecking);
+  WheelMethods := GetWheelMethods(aHScrollChecking, WheelHorizontalSensitivity);
 
   if wwmDefault in WheelMethods then
     WheelWindow := Window
@@ -561,7 +567,7 @@ begin
   Result := FExeName;
 end;
 
-function TWindowWheelInfo.GetWheelMethods(HScrollChecking: Boolean): TWindowWheelMethods;
+function TWindowWheelInfo.GetWheelMethods(HScrollChecking: Boolean; var WheelHorizontalSensitivity: Double): TWindowWheelMethods;
 begin
   Result := [wwmDefault];
 
@@ -617,6 +623,13 @@ begin
   if ExePath.Contains('PowerToys') then
   begin
     Exit([wwmSkip]);
+  end;
+
+  // Visual Studio
+  if (Text.EndsWith('Microsoft Visual Studio')) then
+  begin
+    WheelHorizontalSensitivity := 4.0;
+    Exit([wwmDefault, wwmHScrollAsHWheel, wwmShiftScrollInvert]);
   end;
 
   if (HScrollChecking) then

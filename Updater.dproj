@@ -129,13 +129,13 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <BRCC_CodePage>65001</BRCC_CodePage>
         <BRCC_OutputDir>Win32\Release\res\</BRCC_OutputDir>
-        <VerInfo_Build>43</VerInfo_Build>
+        <VerInfo_Build>45</VerInfo_Build>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <PostBuildEvent><![CDATA[(If Not Exist "$(PROJECTDIR)\Build" (mkdir "$(PROJECTDIR)\Build"))
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\MouseMAC$(OUTPUTNAME)32$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Updater;FileVersion=3.0.0.43;InternalName=Updater;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)Updater32.exe;ProductName=MouseMAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Updater;FileVersion=3.0.0.45;InternalName=Updater;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)Updater32.exe;ProductName=MouseMAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -143,13 +143,13 @@ $(PostBuildEvent)]]></PostBuildEvent>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <BRCC_CodePage>65001</BRCC_CodePage>
         <BRCC_OutputDir>Win64\Release\res\</BRCC_OutputDir>
-        <VerInfo_Build>43</VerInfo_Build>
+        <VerInfo_Build>45</VerInfo_Build>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <PostBuildEvent><![CDATA[(If Not Exist "$(PROJECTDIR)\Build" (mkdir "$(PROJECTDIR)\Build"))
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\MouseMAC$(OUTPUTNAME)64$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Updater;FileVersion=3.0.0.43;InternalName=Updater;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)Updater64.exe;ProductName=MouseMAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Updater;FileVersion=3.0.0.45;InternalName=Updater;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)Updater64.exe;ProductName=MouseMAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
