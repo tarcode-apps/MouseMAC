@@ -269,7 +269,7 @@ begin
           Exit(CallNextHookEx(HookHandle, nCode, wParam, lParam));
 
         if FPreviousWindowWheelInfo.Window <> Wnd then
-          FPreviousWindowWheelInfo.Create(Wnd, PMsLl^.pt, FHorizontalScrollOnShiftDown);
+          FPreviousWindowWheelInfo := TWindowWheelInfo.Create(Wnd, PMsLl^.pt, FHorizontalScrollOnShiftDown);
 
         if wwmSkip in FPreviousWindowWheelInfo.WheelMethods then
           Exit(CallNextHookEx(HookHandle, nCode, wParam, lParam));
