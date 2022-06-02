@@ -130,31 +130,33 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Build>47</VerInfo_Build>
+        <VerInfo_Build>48</VerInfo_Build>
         <PostBuildEvent><![CDATA[(If Not Exist "$(PROJECTDIR)\Build" (mkdir "$(PROJECTDIR)\Build"))
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\$(OUTPUTNAME)32$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.47;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)32.exe;ProductName=Mouse MAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.1.0.48;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)32.exe;ProductName=Mouse MAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
         <Manifest_File>Manifest.manifest</Manifest_File>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
-        <VerInfo_Build>47</VerInfo_Build>
+        <VerInfo_Build>48</VerInfo_Build>
         <PostBuildEvent><![CDATA[(If Not Exist "$(PROJECTDIR)\Build" (mkdir "$(PROJECTDIR)\Build"))
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\$(OUTPUTNAME)64$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.0.0.47;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)64.exe;ProductName=Mouse MAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Tarasov Artyom;FileDescription=Mouse MAC;FileVersion=3.1.0.48;InternalName=Mouse MAC;LegalCopyright=© Tarasov Artyom, 2015 - 2022;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)64.exe;ProductName=Mouse MAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
