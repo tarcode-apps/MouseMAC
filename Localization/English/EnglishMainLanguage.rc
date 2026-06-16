@@ -13,14 +13,14 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 9, "E&xit"
 10, "Version"
 11, "Mouse MAC &website"
-12, "http://mousemac.tarcode.ru"
+12, "http://mousemac.tarasovlabs.com"
 
 22, "Listbox smooth scrolling"
 
 30, "&Horizontal scrolling with \nthe Shift key"
 31, "Scroll &sensitivity setting"
 
-40, "https://mousemac.tarcode.ru/update.uurl"
+40, "https://mousemac.tarasovlabs.com/update.uurl"
 41, "Automatic &updates"
 42, "Turn &on automatic updates"
 43, "Ch&eck for Updates"

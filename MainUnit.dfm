@@ -31,18 +31,20 @@ object MouseExForm: TMouseExForm
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 0
+    ExplicitWidth = 624
     DesignSize = (
       224
       45)
     object LabelAppName: TLabel
       Left = 51
       Top = 5
-      Width = 153
+      Width = 173
       Height = 15
       Anchors = [akLeft, akTop, akRight]
       AutoSize = False
       Caption = 'LabelAppName'
       OnClick = LabelAppInfoClick
+      ExplicitWidth = 573
     end
     object ImageIcon: TImage
       Left = 10
@@ -56,7 +58,7 @@ object MouseExForm: TMouseExForm
     object LabelAppInfo: TLabel
       Left = 51
       Top = 22
-      Width = 153
+      Width = 173
       Height = 15
       Anchors = [akLeft, akTop, akRight]
       AutoSize = False
@@ -69,6 +71,7 @@ object MouseExForm: TMouseExForm
       ParentFont = False
       Visible = False
       OnClick = LabelAppInfoClick
+      ExplicitWidth = 573
     end
   end
   object PanelBottom: TPanel
@@ -83,6 +86,7 @@ object MouseExForm: TMouseExForm
     Constraints.MinHeight = 43
     ParentBackground = False
     TabOrder = 2
+    ExplicitWidth = 624
     object LinkGridPanel: TGridPanel
       Left = 0
       Top = 0
@@ -108,6 +112,7 @@ object MouseExForm: TMouseExForm
         end>
       ShowCaption = False
       TabOrder = 0
+      ExplicitWidth = 624
       DesignSize = (
         224
         43)
@@ -127,6 +132,7 @@ object MouseExForm: TMouseExForm
         TabOrder = 0
         TabStop = True
         OnClick = LinkClick
+        ExplicitLeft = 299
       end
     end
   end
@@ -144,6 +150,7 @@ object MouseExForm: TMouseExForm
     Padding.Bottom = 12
     ParentColor = True
     TabOrder = 1
+    ExplicitWidth = 624
     object LabelConfig: TLabel
       AlignWithMargins = True
       Left = 16
@@ -180,6 +187,7 @@ object MouseExForm: TMouseExForm
       Caption = 'Enable'
       TabOrder = 0
       OnClick = CheckBoxEnableClick
+      ExplicitWidth = 584
     end
     object CheckBoxInvert: TCheckBox
       AlignWithMargins = True
@@ -195,6 +203,7 @@ object MouseExForm: TMouseExForm
       Caption = 'Invert'
       TabOrder = 1
       OnClick = CheckBoxInvertClick
+      ExplicitWidth = 584
     end
     object CheckBoxHorizontalScrollWithShift: TCheckBox
       AlignWithMargins = True
@@ -211,6 +220,7 @@ object MouseExForm: TMouseExForm
       TabOrder = 2
       WordWrap = True
       OnClick = CheckBoxHorizontalScrollWithShiftClick
+      ExplicitWidth = 584
     end
   end
   object PopupMenuTray: TPopupMenu

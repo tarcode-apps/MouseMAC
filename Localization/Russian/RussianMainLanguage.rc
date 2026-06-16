@@ -13,14 +13,14 @@ LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 9, "В&ыход"
 10, "Версия"
 11, "Посетить &сайт Mouse MAC"
-12, "http://mousemac.tarcode.ru"
+12, "http://mousemac.tarasovlabs.com"
 
 22, "Гладкое прокручивание списков"
 
 30, "&Горизонтальная прокрутка \nс клавишей Shift"
 31, "Настройка &чувствительности прокрутки"
 
-40, "https://mousemac.tarcode.ru/update.uurl"
+40, "https://mousemac.tarasovlabs.com/update.uurl"
 41, "Автоматическое &обновление"
 42, "&Автоматическая проверка обновлений"
 43, "&Проверить на наличие обновлений"

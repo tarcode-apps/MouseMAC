@@ -2,7 +2,7 @@
 
 Allows to scroll inactive window when the mouse pointer is located over it.
 
-![](https://en.mousemac.tarcode.ru/img/promo-dark.png)
+![](https://en.mousemac.tarasovlabs.com/img/promo-dark.png)
 
 ## Advanced Features
 
@@ -10,7 +10,7 @@ Allows to scroll inactive window when the mouse pointer is located over it.
 
 ## Building
 
-Embarcadero RAD Studio 11 is required to build the product.
+Embarcadero RAD Studio 13 is required to build the product.
 
 1. Open a solution MouseMACSolution.groupproj
 2. Right-Click MouseMAC project

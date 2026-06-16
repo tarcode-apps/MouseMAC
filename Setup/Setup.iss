@@ -6,9 +6,9 @@
 #define MainFileHead "MouseMAC"
 #define MainWindowClass "TMouseExForm"
 #define AppMutex "MouseMACMutex"
-#define AppPublisherURL "https://mousemac.tarcode.ru"
-#define AppSupportURL "https://mousemac.tarcode.ru"
-#define AppUpdatesURL "https://mousemac.tarcode.ru"
+#define AppPublisherURL "https://mousemac.tarasovlabs.com"
+#define AppSupportURL "https://mousemac.tarasovlabs.com"
+#define AppUpdatesURL "https://mousemac.tarasovlabs.com"
 #define SetupPostfix "Setup"
 
 #define MainFileName MainFileHead + BitsInstall + ".exe"

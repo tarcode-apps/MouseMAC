@@ -49,7 +49,7 @@ On installation, the application creates a unique identifier in the form of a ra
 6. Software Updates
 
 6.1. Software Product Author may publish (or not to publish) Software Product Updates in order to fix bugs, add new features or for any other reason.
-6.2. In order to distribute such updates, Software Product Author utilizes web-servers mousemac.tarcode.ru, dl.tarcode.ru and update.tarcode.ru (Update Servers) to publish Software Updates and information about them.
+6.2. In order to distribute such updates, Software Product Author utilizes web-servers mousemac.tarasovlabs.com, dl.tarasovlabs.com and update.tarasovlabs.com (Update Servers) to publish Software Updates and information about them.
 6.3. Software Product Author does not take any responsibility on any failures of Update Servers.
 6.4. Software Product Author does not give any guarantees related with publishing of Software Updates to Update Servers and with operability and quality of these Updates.
 6.5 Software Product Updates and new versions published in the Internet and/or on Update Servers may contain newer versions of this agreement. You must read an updated agreement and refrain from installing an update in case when you are not agree to an updated agreement.
@@ -59,14 +59,14 @@ On installation, the application creates a unique identifier in the form of a ra
 This agreement does not guarantee you any technical support.
 At his own decision, Software Product Author may provide (or not to provide) technical support on the request sent by the following means:
 
-Feedback form: https://en.mousemac.tarcode.ru/feedback
-E-mail: admin@tarcode.ru
+Feedback form: https://en.mousemac.tarasovlabs.com/feedback
+E-mail: support@tarasovlabs.com
 
 8. Contacts
 
-MouseMAC, © 2013-2021, Artem Tarasov
-Web: https://en.mousemac.tarcode.ru
-E-Mail: admin@tarcode.ru
+MouseMAC, © 2013-2026, Artem Tarasov
+Web: https://en.mousemac.tarasovlabs.com
+E-Mail: admin@tarasovlabs.com
 
 9. Third Party Libraries
 
