@@ -1,7 +1,6 @@
 object MouseExForm: TMouseExForm
   Left = 196
   Top = 149
-  AutoSize = True
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'MouseExForm'

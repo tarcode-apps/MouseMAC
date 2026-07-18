@@ -131,33 +131,33 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Build>50</VerInfo_Build>
+        <VerInfo_Build>52</VerInfo_Build>
         <PostBuildEvent><![CDATA[(If Not Exist "$(PROJECTDIR)\Build" (mkdir "$(PROJECTDIR)\Build"))
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\$(OUTPUTNAME)32$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=Artem Tarasov;FileDescription=Mouse MAC;FileVersion=3.1.1.50;InternalName=Mouse MAC;LegalCopyright=© Artem Tarasov, 2015 - 2026;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)32.exe;ProductName=Mouse MAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artem Tarasov;FileDescription=Mouse MAC;FileVersion=3.1.2.52;InternalName=Mouse MAC;LegalCopyright=© Artem Tarasov, 2015 - 2026;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)32.exe;ProductName=Mouse MAC 32-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
         <Manifest_File>Manifest.manifest</Manifest_File>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Release>2</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
-        <VerInfo_Build>50</VerInfo_Build>
+        <VerInfo_Build>52</VerInfo_Build>
         <PostBuildEvent><![CDATA[(If Not Exist "$(PROJECTDIR)\Build" (mkdir "$(PROJECTDIR)\Build"))
 copy "$(OUTPUTDIR)$(OUTPUTNAME)$(OUTPUTEXT)" "$(PROJECTDIR)\Build\$(OUTPUTNAME)64$(OUTPUTEXT)"
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Artem Tarasov;FileDescription=Mouse MAC;FileVersion=3.1.1.50;InternalName=Mouse MAC;LegalCopyright=© Artem Tarasov, 2015 - 2026;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)64.exe;ProductName=Mouse MAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Artem Tarasov;FileDescription=Mouse MAC;FileVersion=3.1.2.52;InternalName=Mouse MAC;LegalCopyright=© Artem Tarasov, 2015 - 2026;LegalTrademarks=;OriginalFilename=$(MSBuildProjectName)64.exe;ProductName=Mouse MAC 64-bit;ProductVersion=3.0.0.0;Comments=;ProgramID=ru.tarcode.$(MSBuildProjectName)</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_Release>2</VerInfo_Release>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -171,6 +171,15 @@ $(PostBuildEvent)]]></PostBuildEvent>
         </RcCompile>
         <RcCompile Include="Localization\English\EnglishMainLanguage.rc">
             <Form>EnglishMainLanguage.res</Form>
+        </RcCompile>
+        <RcCompile Include="Localization\Greek\GreekAutorunMessage.rc">
+            <Form>GreekAutorunMessage.res</Form>
+        </RcCompile>
+        <RcCompile Include="Localization\Greek\GreekAutoUpdate.rc">
+            <Form>GreekAutoUpdate.res</Form>
+        </RcCompile>
+        <RcCompile Include="Localization\Greek\GreekMainLanguage.rc">
+            <Form>GreekMainLanguage.res</Form>
         </RcCompile>
         <RcCompile Include="Localization\Russian\RussianAutorunMessage.rc">
             <Form>RussianAutorunMessage.res</Form>

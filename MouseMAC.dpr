@@ -7,6 +7,9 @@
 {$R 'EnglishAutorunMessage.res' 'Localization\English\EnglishAutorunMessage.rc'}
 {$R 'EnglishAutoUpdate.res' 'Localization\English\EnglishAutoUpdate.rc'}
 {$R 'EnglishMainLanguage.res' 'Localization\English\EnglishMainLanguage.rc'}
+{$R 'GreekAutorunMessage.res' 'Localization\Greek\GreekAutorunMessage.rc'}
+{$R 'GreekAutoUpdate.res' 'Localization\Greek\GreekAutoUpdate.rc'}
+{$R 'GreekMainLanguage.res' 'Localization\Greek\GreekMainLanguage.rc'}
 {$R 'RussianAutorunMessage.res' 'Localization\Russian\RussianAutorunMessage.rc'}
 {$R 'RussianAutoUpdate.res' 'Localization\Russian\RussianAutoUpdate.rc'}
 {$R 'RussianMainLanguage.res' 'Localization\Russian\RussianMainLanguage.rc'}

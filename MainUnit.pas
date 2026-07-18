@@ -183,6 +183,7 @@ begin
   Conf := LoadConfig;
 
   // Инициализация интерфейса
+  AutoSize := True;
   Link.LinkMode := True;
   PanelTop.Shape := psBottomLine;
   PanelTop.Style := tfpsHeader;
